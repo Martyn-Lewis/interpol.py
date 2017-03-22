@@ -36,4 +36,7 @@ interpolate("string", {locals}, {globals})
 compiled = interpolate.compile("Hello %{name}")
 print(compiled.interpolate())
 print(compiled.interpolate({"name": "also world"})
+
+# You can escape the interpolation syntax by doubling the %%:
+print("%%{hello}"/i)
 ```
