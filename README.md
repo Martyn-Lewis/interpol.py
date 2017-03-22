@@ -3,9 +3,9 @@ A simple, single-file module for providing interpolation with locals support to 
 
 Evaluated parts of the string are passed to eval, local variables are inferred from parent's local scope where possible.
 
-Local inferrence may not work on all python implementations due to the usage of the callstack, should work with CPython at the very least.
+Local inference may not work on all python implementations due to the usage of the call stack, should work with CPython at the very least.
 
-The inferred locals are only those available from the callstack and so likely won't support closure captures etc, you will likely have to realias those into the scope first.
+The inferred locals are only those available from the call stack and so likely won't support closure captures etc, you will likely have to alias those into the scope first.
 
 ### Usage
 ```python
@@ -26,7 +26,7 @@ print("Hello %{name}."/i)
 print("Hello %{name}."/interpolate({"name": "also world"}))
 print("Hello %{name}."/interpolate(locals={"name": "also world"}))
 
-# You can explicitely provide locals either by their placement ([string, ]locals, globals) or as keyword arguments:
+# You can explicitly provide locals either by their placement ([string, ]locals, globals) or as keyword arguments:
 interpolate(..., locals={...})
 "string"/interpolate({...})
 interpolate("string", {locals}, {globals})
