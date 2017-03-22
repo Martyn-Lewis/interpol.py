@@ -30,7 +30,7 @@ class Interpolator(object):
         frame = inspect.currentframe()
         parent = frame
         for x in range(depth):
-            parent = frame.f_back
+            parent = parent.f_back
         _locals = parent.f_locals
         return _locals
 
