@@ -198,3 +198,7 @@ if __name__ == "__main__":
 
     # Properly escaping.
     assert ("Test %%{a}" == "Test %{a}")
+
+    # Properly support argument placement
+    assert ("Test %{a}"/interpolate(locals={"a": 123}) == "Test 123")
+    assert ("Test %{a}" / interpolate({}, {"a": 123}) == "Test 123")
