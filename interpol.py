@@ -25,12 +25,17 @@ class Interpolator(object):
         self.locals = _locals
         self.globals = _globals
 
-    def __call__(self, *args, **kwargs):
-        if not len(args) and not len(kwargs):
-            return self
+    @staticmethod
+    def _scope_out_locals(depth):
+        frame = inspect.currentframe()
+        parent = frame
+        for x in range(depth):
+            parent = frame.f_back
+        _locals = parent.f_locals
+        return _locals
 
-        _locals = self.locals
-        _globals = self.globals
+    @staticmethod
+    def _prepare_args(_locals, _globals, args, kwargs, depth):
         _target = None
 
         # Derive scope from keyword arguments if provided.
@@ -41,30 +46,36 @@ class Interpolator(object):
 
         # Derive scope from arguments if provided.
         args = list(args)
-        if len(args) and type(args[0]) is str: # (target, ...)
+        if len(args) and type(args[0]) is str:  # (target, ...)
             _target = args[0]
             del args[0]
 
-        if len(args): # (target, locals, ...)
+        if len(args):  # (target, locals, ...)
             _locals = args[0]
             del args[0]
 
-        if len(args): # (target, locals, globals)
+        if len(args):  # (target, locals, globals)
             _globals = args[0]
 
-        if supports_stack_inspection:
-            if _locals is None:
-                # Automatically try to obtain locals.
-                # TODO: Move else where.
-                frame = inspect.currentframe()
-                parent = frame.f_back
-                _locals = parent.f_locals
+        if supports_stack_inspection and _locals is None:
+            _locals = Interpolator._scope_out_locals(depth + 1)
 
         if _locals is None:
             _locals = {}
 
         if _globals is None:
             _globals = globals()
+
+        return  _target, _locals, _globals
+
+    def __call__(self, *args, **kwargs):
+        if not len(args) and not len(kwargs):
+            return self
+
+        _locals = self.locals
+        _globals = self.globals
+
+        _target, _locals, _globals = self._prepare_args(_locals, _globals, args, kwargs, 2)
 
         if _target is None:
             # Defer an interpolator for later use.
@@ -79,22 +90,25 @@ class Interpolator(object):
         if self is interpolate:
             _locals = {}
             if supports_stack_inspection:
-                # Automatically try to obtain locals.
-                # TODO: Move somewhere else.
-                frame = inspect.currentframe()
-                parent = frame.f_back
-                _locals = parent.f_locals
+                _locals = Interpolator._scope_out_locals(2)
 
             return Interpolator(_locals)._interpolate(other)
         else:
             return self._interpolate(other)
 
-    def _interpolate(self, string):
+    def _interpolate(self, target):
         _locals = self.locals or {}
         _globals = self.globals or globals()
-        _components = []
+
+        return self.compile(target).interpolate(_locals, _globals)
+
+    def compile(self, string):
         _search = Interpolator.searcher
         _offset = 0
+        _locals = self.locals or {}
+        _globals = self.globals or globals()
+
+        compiled = CompiledInterpolator()
 
         # This needs to be broken up for better parsing at some point.
         # Currently it's just testing "does this work?" and "how practical is this?"
@@ -104,7 +118,7 @@ class Interpolator(object):
                 break
 
             # Make sure we capture the text in between.
-            _components.append(string[_offset:match.start()].replace('%%{', '%{'))
+            compiled.add_component(StringInterpolatorComponent(string[_offset:match.start()].replace('%%{', '%{')))
 
             # We need to safely guarantee the behaviour of strings and dictionaries inside our expression.
             # Consider:
@@ -157,11 +171,49 @@ class Interpolator(object):
                 seek += 1
                 continue
             evaluation = string[seek_from: seek_from + seek - 1]
-            _components.append(eval(evaluation, _globals, _locals))
+            compiled.add_component(EvaluationInterpolatorComponent(evaluation))
             _offset = seek_from + seek
 
-        _components.append(string[_offset:].replace('%%{', '%{'))
-        return "".join(str(x) for x in _components)
+        tail = string[_offset:].replace('%%{', '%{')
+        if len(tail):
+            compiled.add_component(StringInterpolatorComponent(tail))
+        return compiled
+
+
+class CompiledInterpolator(object):
+    def __init__(self):
+        self.components = []
+
+    def add_component(self, component):
+        self.components.append(component)
+
+    def interpolate(self, *args, **kwargs):
+        # Fairly hacky way to do this; we prepend an empty string to the args so that there is no target.
+        # This guarantees that the behaviour of our arguments and scope meets that of the Interpolator, however.
+        _target, _locals, _globals = Interpolator._prepare_args(None, None, [''] + list(args), kwargs, 2)
+        return "".join(x.interpolate(_locals, _globals) for x in self.components)
+
+
+class BaseInterpolatorComponent(object):
+    def interpolate(self, locals, globals):
+        raise NotImplementedError("Derivitive of BaseInterpolatorComponent did not implement interpolate")
+
+
+class StringInterpolatorComponent(BaseInterpolatorComponent):
+    def __init__(self, string):
+        self.value = string
+
+    def interpolate(self, locals, globals):
+        return self.value
+
+
+class EvaluationInterpolatorComponent(BaseInterpolatorComponent):
+    def __init__(self, string):
+        self.value = compile(string, '', 'eval')
+
+    def interpolate(self, locals, globals):
+        return str(eval(self.value, globals, locals))
+
 
 interpolate = Interpolator()
 
@@ -205,5 +257,11 @@ if __name__ == "__main__":
 
     # Multiple interpolation.
     assert("Test %{a} and %{a}"/interpolate == "Test 123 and 123")
+
+    # Compiled tests.
+    compiled = interpolate.compile("Test %{a}")
+    assert (compiled.interpolate() == "Test 123")
+    assert (compiled.interpolate({"a": 321}) == "Test 321")
+    assert (compiled.interpolate(locals={"a": 321}) == "Test 321")
 
     print("Passed all tests.")
