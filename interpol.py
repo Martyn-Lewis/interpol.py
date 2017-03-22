@@ -135,7 +135,7 @@ class Interpolator(object):
                         seek += 1
                         continue
                     else:
-                        offset += 1
+                        seek += 1
                         continue
                 elif string[offset] in ['"', "'"]:
                     in_string = string[offset]
@@ -194,11 +194,16 @@ if __name__ == "__main__":
     assert ("Test %{'asd'}"/interpolate == "Test asd")
 
     # Properly escaping sub braces.
-    assert ("Test %{{'a': 123}[a]}" == "Test 123")
+    assert ("Test %{{'a': 123}['a']}"/interpolate == "Test 123")
 
     # Properly escaping.
-    assert ("Test %%{a}" == "Test %{a}")
+    assert ("Test %%{a}"/interpolate == "Test %{a}")
 
     # Properly support argument placement
     assert ("Test %{a}"/interpolate(locals={"a": 123}) == "Test 123")
-    assert ("Test %{a}" / interpolate({}, {"a": 123}) == "Test 123")
+    assert ("Test %{a}"/interpolate({}, {"a": 123}) == "Test 123")
+
+    # Multiple interpolation.
+    assert("Test %{a} and %{a}"/interpolate == "Test 123 and 123")
+
+    print("Passed all tests.")
