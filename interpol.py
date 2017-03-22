@@ -70,7 +70,7 @@ class Interpolator(object):
             # Defer an interpolator for later use.
             return Interpolator(_locals, _globals)
         else:
-            return Interpolator(_locals, _globals).__interpolate__(_target)
+            return Interpolator(_locals, _globals)._interpolate(_target)
 
     def __rtruediv__(self, other):
         if not type(other) is str:
@@ -85,11 +85,11 @@ class Interpolator(object):
                 parent = frame.f_back
                 _locals = parent.f_locals
 
-            return Interpolator(_locals).__interpolate__(other)
+            return Interpolator(_locals)._interpolate(other)
         else:
-            return self.__interpolate__(other)
+            return self._interpolate(other)
 
-    def __interpolate__(self, string):
+    def _interpolate(self, string):
         _locals = self.locals or {}
         _globals = self.globals or globals()
         _components = []
