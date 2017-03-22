@@ -35,5 +35,5 @@ interpolate("string", {locals}, {globals})
 # If you intend to use the same interpolation many times it may be a good idea to use the compile method:
 compiled = interpolate.compile("Hello %{name}")
 print(compiled.interpolate())
-print(compiled.interpolate({{"name": "also world"))
+print(compiled.interpolate({"name": "also world"})
 ```
