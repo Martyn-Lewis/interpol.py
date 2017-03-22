@@ -27,7 +27,7 @@ class Interpolator(object):
 
     def __call__(self, *args, **kwargs):
         if not len(args) and not len(kwargs):
-            raise TypeError("Interpolator.__call__ takes at least 1 positional argument or 1 keyword argument, but 0 were given")
+            return self
 
         _locals = self.locals
         _globals = self.globals
