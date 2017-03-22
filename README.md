@@ -18,6 +18,10 @@ print(interpolate("Hello %{name}."))
 # You can also use it on the right-hand of any division with a string.
 print("Hello %{name}."/interpolate)
 
+# This is typically better looking when a shorter name is used:
+i = interpolate
+print("Hello %{name}."/i)
+
 # You can pass locals / globals in with this syntax too:
 print("Hello %{name}."/interpolate({"name": "also world"}))
 print("Hello %{name}."/interpolate(locals={"name": "also world"}))
