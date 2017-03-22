@@ -18,6 +18,16 @@ del test_target
 if supports_stack_inspection:
     import inspect
 
+
+# Basic errors
+class InterpolationError(Exception):
+    pass
+
+
+class InterpolatorCompilerError(InterpolationError):
+    pass
+
+
 class Interpolator(object):
     searcher = re.compile(r'(?<![%])%{')
 
@@ -170,6 +180,9 @@ class Interpolator(object):
 
                 seek += 1
                 continue
+            if seek_from + seek >= len(string) and string[-1] != '}':
+                raise InterpolatorCompilerError("seemingly unclosed interpolation braces from offset {}".format(seek_from))
+
             evaluation = string[seek_from: seek_from + seek - 1]
             compiled.add_component(EvaluationInterpolatorComponent(evaluation))
             _offset = seek_from + seek
@@ -209,10 +222,17 @@ class StringInterpolatorComponent(BaseInterpolatorComponent):
 
 class EvaluationInterpolatorComponent(BaseInterpolatorComponent):
     def __init__(self, string):
-        self.value = compile(string, '', 'eval')
+        self.debug = string
+        try:
+            self.value = compile(string, '', 'eval')
+        except Exception as ex:
+            raise InterpolatorCompilerError("error occurred while trying to compile interpolation code for '{}': {}".format(string, str(ex)))
 
     def interpolate(self, locals, globals):
-        return str(eval(self.value, globals, locals))
+        try:
+            return str(eval(self.value, globals, locals))
+        except Exception as ex:
+            raise InterpolationError("error occurred while trying to evaluate fragment '{}': {}".format(self.debug, str(ex)))
 
 
 interpolate = Interpolator()
