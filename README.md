@@ -44,22 +44,10 @@ print("%%{hello}"/i)
 ### Performance
 Due to being implemented in pure python and having to compile and evaluate python code the performance is far below that of format. I therefore don't recommend using this if performance is key at all. Here are some timeit benchmarks:
 ```python
-1,000 'Test %{a}', no pre-compile time time: 0.02390389097854495
-1,000 'Test %{a}', no pre-compile time time: 0.022459194995462894
-1,000 'Test %{a}', no pre-compile time time: 0.022449620999395847
-1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.04242120310664177
-1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.03899335814639926
-1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.03977311588823795
-1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time: 0.06429069815203547
-1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time: 0.06474802596494555
-1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time: 0.06646277289837599
-1,000 precompiled 'Test %{a}' time: 0.008587033953517675
-1,000 precompiled 'Test %{a}' time: 0.008428404107689857
-1,000 precompiled 'Test %{a}' time: 0.008313735015690327
-1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.01043956633657217
-1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.010035686660557985
-1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.010169623885303736
-1,000 'Test {} {} {}' with .format time: 0.0004477649927139282
-1,000 'Test {} {} {}' with .format time: 0.0004347860813140869
-1,000 'Test {} {} {}' with .format time: 0.0004571452736854553
+1,000 'Test %{a}', no pre-compile time time: 0.02149105508811772
+1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.03565418565180153
+1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time: 0.06147387819830328
+1,000 precompiled 'Test %{a}' time: 0.007738754297606647
+1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.00940440864302218
+1,000 'Test {} {} {}' with .format time: 0.00042281136382371187
 ```
