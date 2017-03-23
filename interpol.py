@@ -30,6 +30,7 @@ class InterpolatorCompilerError(InterpolationError):
 
 class Interpolator(object):
     searcher = re.compile(r'(?<![%])%{')
+    variable = re.compile(r'^[a-z_][a-z0-9_]*$', re.IGNORECASE)
 
     def __init__(self, _locals=None, _globals=None):
         self.locals = _locals
@@ -114,6 +115,7 @@ class Interpolator(object):
 
     def compile(self, string):
         _search = Interpolator.searcher
+        _variable_match = Interpolator.variable
         _offset = 0
         _locals = self.locals or {}
         _globals = self.globals or globals()
@@ -183,8 +185,11 @@ class Interpolator(object):
             if seek_from + seek >= len(string) and string[-1] != '}':
                 raise InterpolatorCompilerError("seemingly unclosed interpolation braces from offset {}".format(seek_from))
 
-            evaluation = string[seek_from: seek_from + seek - 1]
-            compiled.add_component(EvaluationInterpolatorComponent(evaluation))
+            evaluation = string[seek_from: seek_from + seek - 1].strip()
+            if _variable_match.match(evaluation):
+                compiled.add_component(VariableInterpolatorComponent(evaluation))
+            else:
+                compiled.add_component(EvaluationInterpolatorComponent(evaluation))
             _offset = seek_from + seek
 
         tail = string[_offset:].replace('%%{', '%{')
@@ -234,6 +239,21 @@ class EvaluationInterpolatorComponent(BaseInterpolatorComponent):
         except Exception as ex:
             raise InterpolationError("error occurred while trying to evaluate fragment '{}': {}".format(self.debug, str(ex)))
 
+
+class VariableInterpolatorComponent(BaseInterpolatorComponent):
+    def __init__(self, string):
+        self.key = string
+
+    def interpolate(self, locals, globals):
+        key = self.key
+
+        if key in locals:
+            return str(locals[key])
+
+        if key in globals:
+            return str(globals[key])
+
+        raise InterpolationError("tried to interpolate variable {}, but it's not in any scope".format(key))
 
 interpolate = Interpolator()
 
