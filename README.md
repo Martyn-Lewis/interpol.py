@@ -63,4 +63,3 @@ Due to being implemented in pure python and having to compile and evaluate pytho
 1,000 'Test {} {} {}' with .format time: 0.0004347860813140869
 1,000 'Test {} {} {}' with .format time: 0.0004571452736854553
 ```
-Any attempts to improve these times would be greatly appreciated as they're currently very high.
