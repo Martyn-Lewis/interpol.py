@@ -175,7 +175,10 @@ class Interpolator(object):
                 if string[offset] == '}':
                     seek += 1
                     if brace_counter > 0:
-                        brace_counter -= 1
+                        if seek_from + seek + 1 < len(string):
+                            # Don't decrease the counter as we're actually hanging.
+                            # Kind of a hacky way of doing this.
+                            brace_counter -= 1
                         continue
                     else:
                         # We've finally escaped.
@@ -186,7 +189,7 @@ class Interpolator(object):
 
                 seek += 1
                 continue
-            if seek_from + seek >= len(string) and string[-1] != '}':
+            if seek_from + seek >= len(string) and (string[-1] != '}' or brace_counter > 0):
                 raise InterpolatorCompilerError("seemingly unclosed interpolation braces from offset {}".format(seek_from))
 
             evaluation = string[seek_from: seek_from + seek - 1].strip()
