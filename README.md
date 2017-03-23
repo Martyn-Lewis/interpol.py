@@ -59,8 +59,8 @@ Due to being implemented in pure python and having to compile and evaluate pytho
 1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.01043956633657217
 1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.010035686660557985
 1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.010169623885303736
-1,000 triple-interpolation with .format time: 0.0004477649927139282
-1,000 triple-interpolation with .format time: 0.0004347860813140869
-1,000 triple-interpolation with .format time: 0.0004571452736854553
+1,000 'Test {} {} {}' with .format time: 0.0004477649927139282
+1,000 'Test {} {} {}' with .format time: 0.0004347860813140869
+1,000 'Test {} {} {}' with .format time: 0.0004571452736854553
 ```
 Any attempts to improve these times would be greatly appreciated as they're currently very high.
