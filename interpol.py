@@ -65,10 +65,8 @@ class Interpolator(object):
 
         if len(args):  # (target, locals, ...)
             _locals = args[0]
-            del args[0]
-
-        if len(args):  # (target, locals, globals)
-            _globals = args[0]
+            if len(args) > 1:  # (target, locals, globals)
+                _globals = args[1]
 
         if supports_stack_inspection and _locals is None:
             _locals = Interpolator._scope_out_locals(depth + 1)
