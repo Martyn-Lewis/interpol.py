@@ -127,7 +127,7 @@ class Interpolator(object):
 
             # Due to a weird catastrophic backtracking that only occurs in Python's re, we check for escaping here instead.
             if start > 0 and string[start - 1: start + 1] == '%%':
-                compiled.add_component(StringInterpolatorComponent(string[_offset: start + 2].replace('%%{', '%{')))
+                compiled.add_component(StringInterpolatorComponent(string[_offset: start - 1] + "%{"))
                 _offset = start + 2
                 continue
 
@@ -295,6 +295,7 @@ if __name__ == "__main__":
 
     # Properly escaping.
     assert ("Test %%{a}"/interpolate == "Test %{a}")
+    assert ("Test %%%{a}" / interpolate == "Test %%{a}")
 
     # Properly support argument placement
     assert ("Test %{a}"/interpolate(locals={"a": 123}) == "Test 123")
