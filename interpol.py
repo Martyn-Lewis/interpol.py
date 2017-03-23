@@ -115,8 +115,6 @@ class Interpolator(object):
     def compile(self, string):
         _variable_match = Interpolator.variable
         _offset = 0
-        _locals = self.locals or {}
-        _globals = self.globals or globals()
 
         compiled = CompiledInterpolator()
 
