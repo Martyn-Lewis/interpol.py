@@ -40,3 +40,27 @@ print(compiled.interpolate({"name": "also world"})
 # You can escape the interpolation syntax by doubling the %%:
 print("%%{hello}"/i)
 ```
+
+### Performance
+Due to being implemented in pure python and having to compile and evaluate python code the performance is far below that of format. I therefore don't recommend using this if performance is key at all. Here are some timeit benchmarks:
+```python
+1,000 'Test %{a}', no pre-compile time: 0.12606078293174505
+1,000 'Test %{a}', no pre-compile time: 0.1242333548143506
+1,000 'Test %{a}', no pre-compile time: 0.12399666802957654
+1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.2324304413050413
+1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.23992427019402385
+1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.2331438511610031
+1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time: 0.18850204907357693
+1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time: 0.18806733191013336
+1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time:: 0.183881304692477
+1,000 precompiled 'Test %{a}' time: 0.05025141406804323
+1,000 precompiled 'Test %{a}' time: 0.05105634080246091
+1,000 precompiled 'Test %{a}' time: 0.04965035291388631
+1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.08902940200641751
+1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.09163709310814738
+1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.0883104968816042
+1,000 'Test {} {} {}' with .format time: 0.0005473741330206394
+1,000 'Test {} {} {}' with .format time: 0.0005133240483701229
+1,000 'Test {} {} {}' with .format time: 0.0006011449731886387
+```
+Any attempts to improve these times would be greatly appreciated as they're currently very high.
