@@ -29,7 +29,6 @@ class InterpolatorCompilerError(InterpolationError):
 
 
 class Interpolator(object):
-    searcher = re.compile(r'%{')
     variable = re.compile(r'^[a-z_][a-z0-9_]*$', re.IGNORECASE)
 
     def __init__(self, _locals=None, _globals=None):
@@ -114,7 +113,6 @@ class Interpolator(object):
         return self.compile(target).interpolate(_locals, _globals)
 
     def compile(self, string):
-        _search = Interpolator.searcher
         _variable_match = Interpolator.variable
         _offset = 0
         _locals = self.locals or {}
@@ -125,12 +123,11 @@ class Interpolator(object):
         # This needs to be broken up for better parsing at some point.
         # Currently it's just testing "does this work?" and "how practical is this?"
         while True:
-            match = _search.search(string, _offset)
-            if not match:
+            start = string.find('%{', _offset)
+            if start == -1:
                 break
 
             # Due to a weird catastrophic backtracking that only occurs in Python's re, we check for escaping here instead.
-            start = match.start()
             if start > 0 and string[start - 1: start + 1] == '%%':
                 compiled.add_component(StringInterpolatorComponent(string[_offset: start + 2].replace('%%{', '%{')))
                 _offset = start + 2
@@ -147,7 +144,7 @@ class Interpolator(object):
             #       - should properly end at the final }, not the dictionary's }.
             #   %{"sub interpolation %{\\\"just to confuse the hell out of you\\\"}"/interpolate}
             #       - should properly induce headaches.
-            seek_from = match.end()
+            seek_from = start + 2
             seek = 0
             in_string = False
             brace_counter = 0
