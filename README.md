@@ -44,23 +44,23 @@ print("%%{hello}"/i)
 ### Performance
 Due to being implemented in pure python and having to compile and evaluate python code the performance is far below that of format. I therefore don't recommend using this if performance is key at all. Here are some timeit benchmarks:
 ```python
-1,000 'Test %{a}', no pre-compile time: 0.12606078293174505
-1,000 'Test %{a}', no pre-compile time: 0.1242333548143506
-1,000 'Test %{a}', no pre-compile time: 0.12399666802957654
-1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.2324304413050413
-1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.23992427019402385
-1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.2331438511610031
-1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time: 0.18850204907357693
-1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time: 0.18806733191013336
-1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time:: 0.183881304692477
-1,000 precompiled 'Test %{a}' time: 0.05025141406804323
-1,000 precompiled 'Test %{a}' time: 0.05105634080246091
-1,000 precompiled 'Test %{a}' time: 0.04965035291388631
-1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.08902940200641751
-1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.09163709310814738
-1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.0883104968816042
-1,000 'Test {} {} {}' with .format time: 0.0005473741330206394
-1,000 'Test {} {} {}' with .format time: 0.0005133240483701229
-1,000 'Test {} {} {}' with .format time: 0.0006011449731886387
+1,000 'Test %{a}', no pre-compile time time: 0.02390389097854495
+1,000 'Test %{a}', no pre-compile time time: 0.022459194995462894
+1,000 'Test %{a}', no pre-compile time time: 0.022449620999395847
+1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.04242120310664177
+1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.03899335814639926
+1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.03977311588823795
+1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time: 0.06429069815203547
+1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time: 0.06474802596494555
+1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time: 0.06646277289837599
+1,000 precompiled 'Test %{a}' time: 0.008587033953517675
+1,000 precompiled 'Test %{a}' time: 0.008428404107689857
+1,000 precompiled 'Test %{a}' time: 0.008313735015690327
+1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.01043956633657217
+1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.010035686660557985
+1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.010169623885303736
+1,000 triple-interpolation with .format time: 0.0004477649927139282
+1,000 triple-interpolation with .format time: 0.0004347860813140869
+1,000 triple-interpolation with .format time: 0.0004571452736854553
 ```
 Any attempts to improve these times would be greatly appreciated as they're currently very high.
