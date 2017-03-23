@@ -135,7 +135,7 @@ class Interpolator(object):
                 continue
 
             # Make sure we capture the text in between.
-            compiled.add_component(StringInterpolatorComponent(string[_offset:start].replace('%%{', '%{')))
+            compiled.add_component(StringInterpolatorComponent(string[_offset:start]))
 
             # We need to safely guarantee the behaviour of strings and dictionaries inside our expression.
             # Consider:
@@ -200,7 +200,7 @@ class Interpolator(object):
                 compiled.add_component(EvaluationInterpolatorComponent(evaluation))
             _offset = seek_from + seek
 
-        tail = string[_offset:].replace('%%{', '%{')
+        tail = string[_offset:]
         if len(tail):
             compiled.add_component(StringInterpolatorComponent(tail))
         return compiled
