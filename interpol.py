@@ -30,6 +30,8 @@ class InterpolatorCompilerError(InterpolationError):
 
 
 class Interpolator(object):
+    __slots__ = ['locals', 'globals']
+
     variable = re.compile(r'^[a-z_][a-z0-9_]*$', re.IGNORECASE)
 
     def __init__(self, _locals=None, _globals=None):
@@ -207,6 +209,8 @@ class Interpolator(object):
 
 
 class CompiledInterpolator(object):
+    __slots__ = ['components']
+
     def __init__(self):
         self.components = []
 
@@ -226,6 +230,8 @@ class BaseInterpolatorComponent(object):
 
 
 class StringInterpolatorComponent(BaseInterpolatorComponent):
+    __slots__ = ['value']
+
     def __init__(self, string):
         self.value = string
 
@@ -237,6 +243,8 @@ def EvaluationInterpolatorComponent(string):
     return _EvaluationInterpolatorComponent(string)
 
 class _EvaluationInterpolatorComponent(BaseInterpolatorComponent):
+    __slots__ = ['value', 'debug']
+
     def __init__(self, string):
         self.debug = string
         try:
@@ -252,6 +260,8 @@ class _EvaluationInterpolatorComponent(BaseInterpolatorComponent):
 
 
 class VariableInterpolatorComponent(BaseInterpolatorComponent):
+    __slots__ = ['key']
+
     def __init__(self, string):
         self.key = string
 
