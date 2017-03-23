@@ -45,11 +45,11 @@ print("%%{hello}"/i)
 Due to being implemented in pure python and having to compile and evaluate python code the performance is far below that of str.format.
 If performance is key then using str.format is probably preferred. Here are some timeit benchmarks:
 ```python
-1,000 'Test %{a}', no pre-compile time time: 0.02149105508811772
-1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.03565418565180153
-1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time: 0.06147387819830328
-1,000 precompiled 'Test %{a}' time: 0.007738754297606647
-1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.00940440864302218
-1,000 precompiled 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}' time: 0.007858622949570418
-1,000 'Test {} {} {}' with .format time: 0.00042281136382371187
+1,000 'Test %{a}', no pre-compile time time: 0.010897689205594361
+1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.012634554672986268
+1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time: 0.011250462136231362
+1,000 precompiled 'Test %{a}' time: 0.00806457232683897
+1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.009580608461983503
+1,000 precompiled 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}' time: 0.008049499178305268
+1,000 'Test {} {} {}' with .format time: 0.0004396400135010481
 ```
