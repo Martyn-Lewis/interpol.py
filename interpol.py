@@ -1,4 +1,5 @@
 import re
+import functools
 
 # Detect stack frame traversal support as some Python implementations don't support it. CPython should.
 def detect_inspection_support(seek_target):
@@ -112,7 +113,9 @@ class Interpolator(object):
 
         return self.compile(target).interpolate(_locals, _globals)
 
-    def compile(self, string):
+    @staticmethod
+    @functools.lru_cache(maxsize=512)
+    def compile(string):
         _variable_match = Interpolator.variable
         _offset = 0
 
