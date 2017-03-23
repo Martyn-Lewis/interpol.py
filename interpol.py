@@ -232,8 +232,11 @@ class StringInterpolatorComponent(BaseInterpolatorComponent):
     def interpolate(self, locals, globals):
         return self.value
 
+@functools.lru_cache(512)
+def EvaluationInterpolatorComponent(string):
+    return _EvaluationInterpolatorComponent(string)
 
-class EvaluationInterpolatorComponent(BaseInterpolatorComponent):
+class _EvaluationInterpolatorComponent(BaseInterpolatorComponent):
     def __init__(self, string):
         self.debug = string
         try:
