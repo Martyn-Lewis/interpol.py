@@ -29,7 +29,7 @@ class InterpolatorCompilerError(InterpolationError):
 
 
 class Interpolator(object):
-    searcher = re.compile(r'(?<![%])%{')
+    searcher = re.compile(r'%{')
     variable = re.compile(r'^[a-z_][a-z0-9_]*$', re.IGNORECASE)
 
     def __init__(self, _locals=None, _globals=None):
@@ -129,8 +129,15 @@ class Interpolator(object):
             if not match:
                 break
 
+            # Due to a weird catastrophic backtracking that only occurs in Python's re, we check for escaping here instead.
+            start = match.start()
+            if start > 0 and string[start - 1: start + 1] == '%%':
+                compiled.add_component(StringInterpolatorComponent(string[_offset: start + 2].replace('%%{', '%{')))
+                _offset = start + 2
+                continue
+
             # Make sure we capture the text in between.
-            compiled.add_component(StringInterpolatorComponent(string[_offset:match.start()].replace('%%{', '%{')))
+            compiled.add_component(StringInterpolatorComponent(string[_offset:start].replace('%%{', '%{')))
 
             # We need to safely guarantee the behaviour of strings and dictionaries inside our expression.
             # Consider:
