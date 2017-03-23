@@ -42,7 +42,8 @@ print("%%{hello}"/i)
 ```
 
 ### Performance
-Due to being implemented in pure python and having to compile and evaluate python code the performance is far below that of format. I therefore don't recommend using this if performance is key at all. Here are some timeit benchmarks:
+Due to being implemented in pure python and having to compile and evaluate python code the performance is far below that of str.format.
+If performance is key then using str.format is probably preferred. Here are some timeit benchmarks:
 ```python
 1,000 'Test %{a}', no pre-compile time time: 0.02149105508811772
 1,000 'Test %{a} and %{a} and %{a}', no pre-compile time: 0.03565418565180153
