@@ -50,5 +50,6 @@ If performance is key then using str.format is probably preferred. Here are some
 1,000 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}', no pre-compile time: 0.06147387819830328
 1,000 precompiled 'Test %{a}' time: 0.007738754297606647
 1,000 precompiled 'Test %{a} and %{a} and %{a}' time: 0.00940440864302218
+1,000 precompiled 'Test %{a and a and a and a and 'Hello World' == 'Hello World'}' time: 0.007858622949570418
 1,000 'Test {} {} {}' with .format time: 0.00042281136382371187
 ```
