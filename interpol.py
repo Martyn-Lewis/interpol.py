@@ -176,7 +176,7 @@ class Interpolator(object):
                     seek += 1
                     if brace_counter > 0:
                         if seek_from + seek + 1 < len(string):
-                            # Don't decrease the counter as we're actually hanging.
+                            # Don't decrease the counter when we're actually hanging.
                             # Kind of a hacky way of doing this.
                             brace_counter -= 1
                         continue
